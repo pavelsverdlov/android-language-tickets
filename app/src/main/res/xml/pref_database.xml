@@ -1,0 +1,21 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="appsettings_create_db_from"
+        android:title="@string/pref_title_select_db"
+        android:defaultValue="0"
+        android:entries="@array/pref_list_select_db"
+        android:entryValues="@array/pref_example_list_values"
+        android:negativeButtonText="@null"
+        android:positiveButtonText="@null" />
+
+    <Preference
+        android:key="appsettings_select_db_path"
+        android:title="@string/pref_database_title_select_file"
+        android:summary="there will be put the path of db">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="tickets.language.svp.languagetickets"
+            android:targetClass="tickets.language.svp.languagetickets.ui.activities.FileBrowserActivity"/>
+    </Preference>
+
+</PreferenceScreen>

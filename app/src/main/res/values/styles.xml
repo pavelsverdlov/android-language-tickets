@@ -1,0 +1,97 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <!--<style name="AppTheme" parent="@android:style/Theme.Holo.Light">-->
+        <!--&lt;!&ndash; Customize your theme here. android:Theme.Holo.Light.DarkActionBar&ndash;&gt;-->
+            <!--<item name="android:actionBarStyle">@style/ActionBar.Solid.Keep</item>-->
+            <!--<item name="android:windowBackground">@color/default_background_color</item>-->
+            <!--<item name="android:windowActionBarOverlay">true</item>-->
+            <!--<item name="android:actionBarWidgetTheme">@style/ActionBar.Widget.Keep</item>-->
+            <!--<item name="android:titleTextStyle">@style/Keep.ActionBar.TitleTextStyle</item>-->
+            <!--<item name="android:textColor">@color/title</item>-->
+            <!--<item name="android:textColorPrimary">@color/title</item>-->
+            <!--<item name="android:textColorHint">@color/hint</item>-->
+    <!--</style>-->
+
+    <!-- Google Keep -->
+
+    <style name="Theme.Keep" parent="@android:style/Theme.Holo.Light">
+        <!-- расстягивает drawer на все высоту  -->
+        <!--<item name="android:windowTranslucentStatus">false</item>-->
+        <item name="android:actionBarStyle">@style/ActionBar.Solid.Keep</item>
+        <item name="android:windowBackground">@color/default_background_color</item>
+        <item name="android:windowActionBarOverlay">true</item>
+        <item name="android:actionBarWidgetTheme">@style/ActionBar.Widget.Keep</item>
+    </style>
+
+    <style name="ActionBar.Solid.Keep" parent="@android:style/Widget.Holo.ActionBar">
+        <item name="android:background">@drawable/ab_bottom_solid_keep</item>
+        <item name="android:titleTextStyle">@style/Keep.ActionBar.TitleTextStyle</item>
+    </style>
+
+    <style name="Keep.ActionBar.TitleTextStyle" parent="@android:style/TextAppearance.Holo.Widget.ActionBar.Title">
+        <item name="android:textColor">@color/title</item>
+    </style>
+
+    <style name="ActionBar.Widget.Keep" parent="@android:style/Theme.Holo.Light">
+        <item name="android:textColorPrimary">@color/title</item>
+        <item name="android:textColor">@color/title</item>
+        <item name="android:textColorHint">@color/hint</item>
+    </style>
+
+    <style name="ButtonStyle">
+        <item name="android:layout_gravity">center</item>
+        <item name="android:paddingLeft">10dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingRight">10dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:background">@drawable/button_background</item>
+    </style>
+
+    <style name="Box_outer">
+        <item name="android:layout_marginTop">?android:actionBarSize</item>
+        <item name="android:layout_marginLeft">0dp</item>
+        <item name="android:layout_marginRight">0dp</item>
+    </style>
+
+    <style name="Box_inner">
+        <item name="android:layout_marginLeft">5dp</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:layout_marginBottom">5dp</item>
+    </style>
+
+    <style name="box_text">
+        <item name="android:textAppearance">?android:textAppearanceMedium</item>
+        <item name="android:textColor">@android:color/darker_gray</item>
+        <item name="android:gravity">top</item>
+        <item name="android:paddingLeft">8.0dp</item>
+        <item name="android:paddingTop">8.0dp</item>
+        <item name="android:paddingBottom">8.0dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:inputType">textCapSentences</item>
+    </style>
+
+    <style name="left_drawer">
+        <item name="android:background">@color/default_background_color</item>
+    </style>
+
+    <style name="title">
+        <item name="android:textSize">15sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="input_text_control">
+        <item name="android:layout_marginTop">35dp</item>
+        <item name="android:layout_marginBottom">10dp</item>
+        <item name="android:layout_marginLeft">10dp</item>
+        <item name="android:layout_marginRight">10dp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
+</resources>

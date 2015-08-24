@@ -1,0 +1,45 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="tickets.language.svp.languagetickets.AddTicketActivity">
+    <item
+        android:title="language 1"
+        android:id="@+id/actionbar_languagefirst"
+        android:showAsAction="always"
+        android:orderInCategory="1"
+        android:actionViewClass="android.widget.Spinner"
+        />
+    <item
+        android:id="@+id/add_ticket_dictionaries_menu_turnover"
+        android:orderInCategory="2"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="" />
+    <item
+        android:title="language 2"
+        android:id="@+id/actionbar_languagesecond"
+        android:showAsAction="always"
+        android:orderInCategory="3"
+        android:actionViewClass="android.widget.Spinner"
+    />
+    <item
+        android:id="@+id/add_ticket_dictionaries_menu_selectcolor"
+        android:orderInCategory="4"
+        android:showAsAction="always"
+        android:icon="@drawable/ic_action_picture"
+        android:title="" />
+
+    <item
+        android:id="@+id/add_ticket_dictionaries_menu_markAsLearned"
+        android:orderInCategory="5"
+        android:showAsAction="ifRoom"
+        android:title="Mark as learned"
+        />
+    <item
+        android:id="@+id/add_ticket_dictionaries_menu_delete"
+        android:orderInCategory="5"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_discard"
+        android:title="Delete"
+        />
+</menu>

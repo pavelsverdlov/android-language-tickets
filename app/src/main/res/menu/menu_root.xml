@@ -1,0 +1,50 @@
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="tickets.language.svp.languagetickets.RootActivity">
+    <item
+        android:id="@+id/action_search"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_search"
+        android:title=""
+        />
+    <item
+        android:id="@+id/actionbar_top_btn_add_new"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_new"
+        android:title=""
+        />
+    <item android:id="@+id/action_settings"
+        android:title="@string/action_settings"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    <item android:id="@+id/action_startgamelearning"
+        android:title="@string/action_game_learning"
+        android:orderInCategory="100"
+        android:showAsAction="never" />
+    <!--For drawer-->
+
+    <item
+        android:id="@+id/actionbar_top_btn_add_new_dictionary"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_new"
+        android:title=""
+        />
+    <item
+        android:id="@+id/actionbar_top_btn_edit_dictionary"
+        android:orderInCategory="100"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/ic_action_edit"
+        android:title=""
+        />
+    <item
+        android:id="@+id/actionbar_top_btn_remove_dictionary"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:icon="@drawable/ic_action_discard"
+        android:title="Delete dictionary"
+        />
+</menu>

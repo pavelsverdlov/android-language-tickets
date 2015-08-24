@@ -1,0 +1,21 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- These settings headers are only used on tablets. -->
+
+    <header
+        android:fragment="tickets.language.svp.languagetickets.AppSettingsActivity$DatabasePreferenceFragment"
+        android:title="@string/pref_header_database" />
+    <!--
+    <header
+        android:fragment="tickets.language.svp.languagetickets.AppSettingsActivity$GeneralPreferenceFragment"
+        android:title="@string/pref_header_general" />
+
+    <header
+        android:fragment="tickets.language.svp.languagetickets.AppSettingsActivity$NotificationPreferenceFragment"
+        android:title="@string/pref_header_notifications" />
+
+    <header
+        android:fragment="tickets.language.svp.languagetickets.AppSettingsActivity$DataSyncPreferenceFragment"
+        android:title="@string/pref_header_data_sync" />
+-->
+</preference-headers>

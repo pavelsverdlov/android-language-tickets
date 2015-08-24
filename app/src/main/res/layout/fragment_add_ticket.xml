@@ -1,0 +1,132 @@
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/add_ticket_frame_base"
+    android:layout_height="fill_parent"
+
+    android:padding="@dimen/activity_vertical_margin"
+    tools:context="tickets.language.svp.languagetickets.AddTicketActivity$PlaceholderFragment">
+
+    <!--
+    android:orientation="vertical"
+    android:layout_marginTop="?android:actionBarSize"
+    -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <LinearLayout
+            android:id="@+id/add_ticket_frame_first"
+            android:background="@drawable/shadow"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="10dp">
+            <LinearLayout
+                 android:layout_width="fill_parent"
+                 android:layout_height="wrap_content"
+                 android:orientation="horizontal">
+                     <TextView
+                         android:id="@+id/edit_lang_first"
+                         android:layout_alignParentLeft="true"
+                         android:layout_width="wrap_content"
+                         android:layout_height="wrap_content"
+                         android:textSize="15sp"
+                         android:layout_margin="5dp"/>
+             </LinearLayout>
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:orientation="horizontal">
+                 <EditText
+                        android:textAlignment="center"
+                        android:id="@+id/edit_learning_text_first"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp"
+                        android:text="" />
+                 <ImageButton
+                     android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:src="@drawable/ic_action_new"/>
+            </LinearLayout>
+             <ListView
+                     android:id="@+id/edit_learning_listOfFirst"
+                     android:layout_width="fill_parent"
+                     android:layout_height="wrap_content"
+                     android:clickable="false"
+                     android:scrollbars="none" />
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/add_ticket_frame_second"
+            android:layout_gravity="top"
+            android:minHeight="100dp"
+            android:background="@drawable/shadow"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:padding="10dp">
+            <LinearLayout
+                android:id="@+id/box_rectangle"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                        <TextView
+                            android:id="@+id/edit_lang_second"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:layout_margin="5dp" />
+
+                </LinearLayout>
+
+                <EditText
+                        android:textAlignment="center"
+                        android:id="@+id/edit_learning_text_second"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@android:color/black"
+                        android:textSize="20sp"
+                        android:text="" />
+                <ListView
+                        android:id="@+id/edit_learning_listOfSecond"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:clickable="false"/>
+            </LinearLayout>
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/add_ticket_frame_dictionary"
+            android:background="@drawable/shadow"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:padding="10dp">
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="15sp"
+                            android:layout_margin="5dp"
+                            android:text="@string/activity_add_ticket_title_dictionary" />
+            </LinearLayout>
+                <Spinner
+                    android:layout_marginTop="15dp"
+                    android:id="@+id/add_ticket_dictionaries"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"/>
+            </FrameLayout>
+
+    </LinearLayout>
+</ScrollView>
