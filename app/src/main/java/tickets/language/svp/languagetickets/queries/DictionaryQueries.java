@@ -6,12 +6,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import tickets.language.svp.languagetickets.domain.IQueryObject;
+import tickets.language.svp.languagetickets.domain.db.DbActivateSettings;
 import tickets.language.svp.languagetickets.domain.model.DictionaryDto;
 import tickets.language.svp.languagetickets.ui.viewModel.DictionaryViewModel;
 
 public class DictionaryQueries {
-    public static IQueryObject<DictionaryViewModel> getAll(){
-        return new GetAllDictionaries();
+    public static IQueryObject<DictionaryViewModel> getAll(DbActivateSettings sett){
+        return new GetAllDictionaries(sett);
     }
 
 //    public static IQueryObject<DictionaryViewModel> getSystemDictionaries(){
@@ -21,23 +22,29 @@ public class DictionaryQueries {
 //        return new AddSystem(newtext);
 //    }
 
-    public static IQueryObject addNew(String newtext) {
-        return new Add(newtext);
+    public static IQueryObject addNew(DbActivateSettings sett,String newtext) {
+        return new Add(sett, newtext);
     }
 
-    public static IQueryObject remove(DictionaryViewModel dic) {
-        return new Remove(dic);
+    public static IQueryObject remove(DbActivateSettings sett, DictionaryViewModel dic) {
+        return new Remove(sett,dic);
     }
 
     public static final class Remove extends AQueryObject<DictionaryViewModel> {
-        public Remove(DictionaryViewModel dic){
-            query.append(getDeleteDictionariesTableQuery(dic.dto.id));
-            //TODO: remove all tickets with this dictionary
+        private final int id;
+        public Remove(DbActivateSettings sett, DictionaryViewModel dic){
+            super(sett);
+            id = dic.dto.id;
+            query.append(getDeleteDictionariesTableQuery(id));
         }
 
         @Override
         public String[] getQuery() {
-            return new String[]{ query.toString() };
+            return new String[]{
+                query.toString(),
+                //remove all tickets from this dictionary
+                getDeleteTicketDictionariesTableByDicIdQuery(id)
+            };
         }
 
         @Override
@@ -47,7 +54,8 @@ public class DictionaryQueries {
     }
 
     public static final class Add extends AQueryObject<DictionaryViewModel> {
-        public Add(String title){
+        public Add(DbActivateSettings sett, String title){
+            super(sett);
             query.append(getInsertDictionariesTableQuery(title, new Date()));
         }
 
@@ -63,7 +71,8 @@ public class DictionaryQueries {
     }
 
     public static final class GetAllDictionaries extends AQueryObject<DictionaryViewModel> {
-        public GetAllDictionaries(){
+        public GetAllDictionaries(DbActivateSettings sett){
+            super(sett);
             query.append(getSelectDictionariesTableQuery(null));
         }
         @Override
@@ -93,7 +102,8 @@ public class DictionaryQueries {
     }
 
     public static final class GetSystem extends AQueryObject<DictionaryViewModel> {
-        public GetSystem() {
+        public GetSystem(DbActivateSettings sett) {
+            super(sett);
             query.append(getSelectDictionariesTableQuery("sys=1"));
         }
         @Override
@@ -123,7 +133,8 @@ public class DictionaryQueries {
     }
 
     public static final class AddSystem extends AQueryObject<DictionaryViewModel> {
-        public AddSystem(String title){
+        public AddSystem(DbActivateSettings sett,String title){
+            super(sett);
             query.append(getInsertSysDictionariesTableQuery(title, new Date()));
         }
 

@@ -48,7 +48,8 @@ public class Database {
 //        return openFromLocalStore(path);
 //    }
     private static SQLiteDatabase openFromLocalStore(File path){
-        return SQLiteDatabase.openDatabase(path.getPath(), null, SQLiteDatabase.OPEN_READWRITE);
+        return SQLiteDatabase.openOrCreateDatabase(path, null);
+//        return SQLiteDatabase.openDatabase(path.getPath(), null, SQLiteDatabase.OPEN_READWRITE);
     }
     protected static SQLiteDatabase open(DbActivateSettings as){
         return openFromLocalStore(as.path);
@@ -63,6 +64,7 @@ public class Database {
     }
 
     protected static void activate(DbActivateSettings as){
+        //SQLiteDatabase.deleteDatabase(as.path);
         SQLiteDatabase db = open(as);
        // db = open();
         //SQLiteDatabase.openDatabase("path",null, SQLiteDatabase.OPEN_READWRITE);
@@ -103,6 +105,9 @@ public class Database {
             db.execSQL("CREATE TABLE IF NOT EXISTS "
                     + dbLanguagesTableName
                     + " (id INTEGER PRIMARY KEY AUTOINCREMENT, name VARCHAR);");
+
+            db.execSQL("INSERT INTO tb_languages (name) VALUES ('russian');");
+            db.execSQL("INSERT INTO tb_languages (name) VALUES ('english');");
 
             //database2.rawQuery("select max(UnixTimeStamp) from Quote where EmoticonID=? and SubCategoryID=?" ,new String [] {String.valueOf(g),String.valueOf(s)});
             //db.execSQL("DROP TABLE IF EXISTS + TABLE_NAME);
@@ -244,6 +249,11 @@ public class Database {
                 learningText, language, correctCount, incorrectCount, id
         ).toString();
     }
+    private static final String deleteSideTicketTableQueryFormat =
+            "DELETE FROM  " + dbSideTicketsTableName + " WHERE id='%s';";
+    protected String getDeleteSideTicketTableQuery(String id){
+        return getFormatter().format(deleteSideTicketTableQueryFormat, id).toString();
+    }
 
     //endregion
 
@@ -307,6 +317,13 @@ public class Database {
         return getFormatter().format(deleteTicketDictionariesTableQueryFormat, idTicket
         ).toString();
     }
+    private static final String deleteTicketDictionariesTableByDicIdQueryFormat = "DELETE FROM "
+            + dbTicketDictionariesTableName + " WHERE idDictionary=%d;";
+    protected String getDeleteTicketDictionariesTableByDicIdQuery(int idDic){
+        return getFormatter().format(deleteTicketDictionariesTableByDicIdQueryFormat, idDic
+        ).toString();
+    }
+
     //endregion
 
     //region learned dictionary

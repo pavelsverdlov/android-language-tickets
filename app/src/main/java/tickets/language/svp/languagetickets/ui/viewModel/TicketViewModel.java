@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import tickets.language.svp.languagetickets.domain.StringHelper;
+import tickets.language.svp.languagetickets.domain.db.DbActivateSettings;
 import tickets.language.svp.languagetickets.domain.model.DictionaryDto;
 import tickets.language.svp.languagetickets.domain.model.LanguageDto;
 import tickets.language.svp.languagetickets.domain.model.LearnTicketDto;
@@ -29,6 +30,7 @@ public class TicketViewModel implements Serializable {
     private boolean isChanged;
     private boolean isNew;
     private boolean isRemoved;
+    private boolean isLearned;
 
     private final LearnTicketDto dto;
 
@@ -65,6 +67,9 @@ public class TicketViewModel implements Serializable {
     }
     public String[] getLearningText(SideTypes type) {
         return StringHelper.splitByLineSeparator(getCurrent(type).learningText);
+    }
+    public String getText(SideTypes type) {
+        return getCurrent(type).learningText;
     }
 
     public void turnOver(){
@@ -156,7 +161,8 @@ public class TicketViewModel implements Serializable {
         private final LearnTicketDto ticket;
         private final TicketViewModel tvm;
 
-        public AddTicketQuery(TicketViewModel vm){
+        public AddTicketQuery(DbActivateSettings sett,TicketViewModel vm){
+            super(sett);
             tvm = vm;
             ticket = vm.dto;
         }
@@ -198,13 +204,19 @@ public class TicketViewModel implements Serializable {
     public static class RemoveQuery extends AQueryObject<TicketViewModel>{
         private final LearnTicketDto ticket;
 
-        public RemoveQuery(TicketViewModel vm) {
+        public RemoveQuery(DbActivateSettings sett,TicketViewModel vm) {
+            super(sett);
             ticket = vm.dto;
         }
 
         @Override
         public String[] getQuery() {
-            return new String[]{getRemoveLearnTicketsTableQueryById(ticket.id)};
+            return new String[]{
+                    getDeleteSideTicketTableQuery(ticket.first.id),
+                    getDeleteSideTicketTableQuery(ticket.second.id),
+                    getDeleteTicketDictionariesTableQuery(ticket.id),
+                    getRemoveLearnTicketsTableQueryById(ticket.id)
+            };
         }
 
         @Override
@@ -215,7 +227,8 @@ public class TicketViewModel implements Serializable {
     public static class UpdateQuery extends AQueryObject<TicketViewModel>{
         private final LearnTicketDto ticket;
 
-        public UpdateQuery(TicketViewModel vm) {
+        public UpdateQuery(DbActivateSettings sett,TicketViewModel vm) {
+            super(sett);
             ticket = vm.dto;
         }
 
@@ -248,8 +261,9 @@ public class TicketViewModel implements Serializable {
     public static class AddAsLearned extends AQueryObject<TicketViewModel>{
         private final LearnTicketDto dto;
 
-        public AddAsLearned(TicketViewModel vm){
-           dto = vm.dto;
+        public AddAsLearned(DbActivateSettings sett, TicketViewModel vm){
+            super(sett);
+            dto = vm.dto;
         }
         @Override
         public String[] getQuery() {

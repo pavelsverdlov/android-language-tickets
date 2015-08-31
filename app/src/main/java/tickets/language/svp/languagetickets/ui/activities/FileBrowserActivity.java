@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -30,6 +31,17 @@ public class FileBrowserActivity extends ListActivity {
         setContentView(R.layout.activity_file_browser);
 
         controller = new FileBrowserActivityController(this);
+
+        Button back = (Button)findViewById(R.id.filebrouser_btn_back);
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File file = new File(path);
+                Intent intent = new Intent(FileBrowserActivity.this, FileBrowserActivity.class);
+                intent.putExtra("path", file.getParentFile().getPath());
+                startActivity(intent);
+            }
+        });
 
         // Use the current directory as title
         path = controller.userSettings.getDbActivateSettings().path.getParentFile().getPath();

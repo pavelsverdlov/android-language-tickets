@@ -239,10 +239,9 @@ public class AppSettingsActivity extends PreferenceActivity {
                 try {
                     int val = Integer.parseInt(value.toString());
                     switch (val) {
-                        case 0:
-                            return SelectingStorage.Application;
-                        case 1:
-                            return SelectingStorage.GoogleDrive;
+                        case 0: return SelectingStorage.Application;
+                        case 1: return SelectingStorage.Device;
+                        case 2: return SelectingStorage.GoogleDrive;
                     }
                 }catch (Exception ex){
 

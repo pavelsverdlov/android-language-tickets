@@ -2,6 +2,7 @@ package tickets.language.svp.languagetickets.ui.viewModel;
 
 import java.io.Serializable;
 
+import tickets.language.svp.languagetickets.domain.Consts;
 import tickets.language.svp.languagetickets.domain.model.DictionaryDto;
 
 /**
@@ -26,10 +27,14 @@ public class DictionaryViewModel implements Serializable {
     }
 
     public int getLength() {
-        return dto.length - 1;
+        return dto.length;
     }
 
     public boolean isSys() {
         return dto.sys == 1;
+    }
+
+    public boolean isLearned() {
+        return Consts.Dictionary.Learned == this;
     }
 }

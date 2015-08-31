@@ -28,5 +28,7 @@
     <string name="title_activity_edit_ticket"></string>
     <string name="title_activity_google_drive">GoogleDriveActivity</string>
     <string name="title_activity_file_browser">FileBrowserActivity</string>
+    <string name="title_activity_root_seach">RootSeachActivity</string>
+    <string name="title_activity_search_results">SearchResultsActivity</string>
 
 </resources>

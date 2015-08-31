@@ -12,9 +12,7 @@ import tickets.language.svp.languagetickets.domain.db.DbActivateSettings;
  */
 public class Repository extends Database {
 //    private static boolean isTest = false;
-    private final DbActivateSettings activateSettings;
     public Repository(DbActivateSettings activateSettings){
-        this.activateSettings = activateSettings;
         activate(activateSettings);
 //        if(isTest) return;
 //        SQLiteDatabase db = null;
@@ -31,7 +29,7 @@ public class Repository extends Database {
         SQLiteDatabase db = null;
         Cursor c = null;
         try {
-            db = open(activateSettings);
+            db = open(query.getConnectSettings());
             String[] queries = query.getQuery();
             if(queries.length != 1){
                 throw new InternalError("get - queries.length != 1");
@@ -64,7 +62,7 @@ public class Repository extends Database {
     private void execute(IQueryObject query){
             SQLiteDatabase db = null;
             try {
-                db = open(activateSettings);
+                db = open(query.getConnectSettings());
                 String[] queries = query.getQuery();
                 for (int i =0; i < queries.length; ++i) {
                     db.execSQL(queries[i]);

@@ -67,6 +67,10 @@ public class AddTicketActivity extends BaseActivity<AddTicketActivity,AddActivit
         actionBar = new ActionBarController(this,getActionBar());
         dictionaries = controller.GetDictionaries();
 
+        //remove "Learned"/"All" dic
+        this.dictionaries.remove(Consts.Dictionary.Learned);
+        this.dictionaries.remove(Consts.Dictionary.All);
+
         if(editing.isNew()) {
             editing.setLanguage(TicketViewModel.SideTypes.Back, languages[0]);
             editing.setLanguage(TicketViewModel.SideTypes.Front, languages[1]);
@@ -140,6 +144,8 @@ public class AddTicketActivity extends BaseActivity<AddTicketActivity,AddActivit
                 return true;
             case R.id.add_ticket_dictionaries_menu_markAsLearned:
                 controller.markAsLearned(editing);
+                this.setResult(RESULT_OK);
+                super.onBackPressed();
                 break;
             case R.id.add_ticket_dictionaries_menu_delete:
                 controller.removeTicket(editing);
@@ -218,9 +224,6 @@ public class AddTicketActivity extends BaseActivity<AddTicketActivity,AddActivit
                                      LanguageViewModel[] languages,
                                      ArrayList<DictionaryViewModel> dictionaries) {
             this.dictionaries = dictionaries;
-            //remove "Learned"/"All" dic
-            this.dictionaries.remove(Consts.Dictionary.Learned);
-            this.dictionaries.remove(Consts.Dictionary.All);
             this.editing = editing;
             this.languages = languages;
 

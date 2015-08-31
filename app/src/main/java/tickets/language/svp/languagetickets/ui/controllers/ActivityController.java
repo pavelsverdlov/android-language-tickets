@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import java.util.ArrayList;
+
 import tickets.language.svp.languagetickets.AddTicketActivity;
 import tickets.language.svp.languagetickets.AppSettingsActivity;
 import tickets.language.svp.languagetickets.GameLearningActivity;
@@ -12,6 +14,7 @@ import tickets.language.svp.languagetickets.R;
 import tickets.language.svp.languagetickets.RootActivity;
 import tickets.language.svp.languagetickets.domain.IQueryObject;
 import tickets.language.svp.languagetickets.domain.Repository;
+import tickets.language.svp.languagetickets.domain.db.DbActivateSettings;
 import tickets.language.svp.languagetickets.domain.model.DictionaryDto;
 import tickets.language.svp.languagetickets.queries.DictionaryQueries;
 import tickets.language.svp.languagetickets.queries.LanguageQueries;
@@ -41,6 +44,22 @@ public abstract class ActivityController<T extends Activity> extends Controller 
         this.activity = activity;
         userSettings = new UserSettings(activity);
         init(userSettings.getDbActivateSettings());
+    }
+
+    public ArrayList<DictionaryViewModel> GetDictionaries() {
+        return super.GetDictionaries(userSettings.getDbActivateSettings());
+    }
+    public void removeTicket(TicketViewModel ticket) {
+        super.removeTicket(userSettings.getDbActivateSettings(),ticket);
+    }
+    public LanguageViewModel[] getLanguages(){
+        return super.getLanguages(userSettings.getDbActivateSettings());
+    }
+    public void addNewTicket(TicketViewModel ticket) {
+        super.addNewTicket(userSettings.getDbActivateSettings(),ticket);
+    }
+    public TicketViewModel[] getTickets(DictionaryViewModel dictionary){
+        return super.getTickets(userSettings.getDbActivateSettings(),dictionary);
     }
 
     public void goToAddTicketActivity(){

@@ -54,12 +54,12 @@ public class Controller{
 
     //region dictionary
 
-    public void addNewDictionary(String newtext) {
-        repository.add(DictionaryQueries.addNew(newtext));
+    public void addNewDictionary(DbActivateSettings sett,String newtext) {
+        repository.add(DictionaryQueries.addNew(sett,newtext));
     }
-    public ArrayList<DictionaryViewModel> GetDictionaries() {
+    public ArrayList<DictionaryViewModel> GetDictionaries(DbActivateSettings sett) {
         ArrayList<DictionaryViewModel> all = new ArrayList<DictionaryViewModel>();
-        DictionaryViewModel[] fromDB = repository.get(DictionaryQueries.getAll());
+        DictionaryViewModel[] fromDB = repository.get(DictionaryQueries.getAll(sett));
         for (DictionaryViewModel dir: fromDB){
             all.add(dir);
         }
@@ -67,9 +67,9 @@ public class Controller{
         all.add(Consts.Dictionary.Learned);
         return all;//.toArray(new DictionaryViewModel[all.size()]);
     }
-    public void removeDictionary(DictionaryViewModel selected) {
+    public void removeDictionary(DbActivateSettings sett, DictionaryViewModel selected) {
         //TODO: ask about tickets in this dictionary and what do we do remove/move
-        repository.remove(DictionaryQueries.remove(selected));
+        repository.remove(DictionaryQueries.remove(sett, selected));
     }
     public DictionaryViewModel getSelectedDictionary(){
         return selectedDictionary;
@@ -78,31 +78,31 @@ public class Controller{
 
     //endregion
 
-    public TicketViewModel[] getTickets(DictionaryViewModel dictionary){
-        TicketViewModel[] tt = repository.get(TicketQueries.getByDictionary(dictionary));
+    public TicketViewModel[] getTickets(DbActivateSettings sett,DictionaryViewModel dictionary){
+        TicketViewModel[] tt = repository.get(TicketQueries.getByDictionary(sett,dictionary));
         if(tt == null){
             tt = new TicketViewModel[0];
         }
         dictionary.dto.length = tt.length;
         return tt;
     }
-    public void addNewTicket(TicketViewModel ticket) {
+    public void addNewTicket(DbActivateSettings set,TicketViewModel ticket) {
         if(ticket.isNew()) {
-            repository.add(TicketQueries.addNew(ticket));
+            repository.add(TicketQueries.addNew(set,ticket));
         }else{
-            updateTicket(ticket);
+            updateTicket(set, ticket);
         }
     }
-    public void removeTicket(TicketViewModel ticket) {
-        repository.remove(TicketQueries.remove(ticket));
+    public void removeTicket(DbActivateSettings set,TicketViewModel ticket) {
+        repository.remove(TicketQueries.remove(set, ticket));
         ticket.markAsRemoved();
     }
-    public void updateTicket(TicketViewModel ticket){
-        repository.update(TicketQueries.update(ticket));
+    public void updateTicket(DbActivateSettings set, TicketViewModel ticket){
+        repository.update(TicketQueries.update(set, ticket));
     }
 
-    public LanguageViewModel[] getLanguages()    {
-        return repository.get(LanguageQueries.GetAll());
+    public LanguageViewModel[] getLanguages(DbActivateSettings sett)    {
+        return repository.get(LanguageQueries.GetAll(sett));
     }
 /*
     private void tryInitSystemDictionaries(){

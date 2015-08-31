@@ -28,7 +28,7 @@ public class RootActivityController extends ActivityController<RootActivity> {
     }
 
     public TicketViewModel[] getTicketsBySelectedDictionary(){
-        displayedTickets = getTickets(getSelectedDictionary());
+        displayedTickets = getTickets(userSettings.getDbActivateSettings(),getSelectedDictionary());
         return displayedTickets;
     }
 
@@ -41,6 +41,6 @@ public class RootActivityController extends ActivityController<RootActivity> {
                 ticket.incorrectTranslated(side);
                 break;
         }
-        updateTicket(ticket);
+        updateTicket(userSettings.getDbActivateSettings(),ticket);
     }
 }

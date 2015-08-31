@@ -1,6 +1,8 @@
 package tickets.language.svp.languagetickets;
 
 import android.app.Fragment;
+import android.app.SearchManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Point;
@@ -14,24 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.FrameLayout;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.drive.Drive;
-import com.google.android.gms.drive.DriveApi;
-import com.google.android.gms.drive.query.Filters;
-import com.google.android.gms.drive.query.Query;
-import com.google.android.gms.drive.query.SearchableField;
-import com.google.android.gms.plus.Plus;
+import android.widget.SearchView;
 
 import tickets.language.svp.languagetickets.ui.AddDictionaryPopup;
 import tickets.language.svp.languagetickets.ui.BaseActivity;
-import tickets.language.svp.languagetickets.ui.DisplayTicketsOnGridAdapter;
 import tickets.language.svp.languagetickets.ui.ShowTicketPopup;
 import tickets.language.svp.languagetickets.ui.ViewExtensions;
 import tickets.language.svp.languagetickets.ui.controllers.RootActivityController;
@@ -53,7 +44,7 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
         controller = new RootActivityController(this);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_root);
-
+        setTitle(controller.getSelectedDictionary().getTitle());
         drawer = new Drawer(getTitle().toString(), new DrawerItemClickListener(){
             @Override
             public void onDictionarySelected(DictionaryViewModel selected){
@@ -139,14 +130,33 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_root, menu);
+
+        SearchManager searchManager =(SearchManager) getSystemService(Context.SEARCH_SERVICE);
+        SearchView searchView =(SearchView) menu.findItem(R.id.root_action_search).getActionView();
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        //searchView.setSearchableInfo(searchManager.getSearchableInfo(new ComponentName(this, SearchResultsActivity.class)));
+//        searchView.setIconifiedByDefault(false);
+//        searchView.setQueryHint(getString(android.s));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                fragment.search(newText);
+                return true;
+            }
+        });
+
         return super.onCreateOptionsMenu(menu);
         //return true;
     }
 
     private final int[] menukeys = new int[]{
-        R.id.action_search,
+        R.id.root_action_search,
         R.id.actionbar_top_btn_add_new,
         R.id.action_settings,
         R.id.action_startgamelearning
@@ -174,6 +184,9 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
             return true;
         }
         switch (item.getItemId()) {
+//            case R.id.root_action_search:
+//                ProductsResulstActivity.this.finish();
+//                break;
             case R.id.actionbar_top_btn_add_new:
                 controller.goToAddTicketActivity();
                 return true;
@@ -210,6 +223,12 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
 
     public static class PlaceholderFragment extends Fragment {
         private RootActivityController controller;
+        private TicketViewModel[] tickets;
+        LayoutInflater inflater;
+        ViewGroup container;
+        OnTicketClickListener listener;
+        LinearLayout col1;
+        LinearLayout col2;
         public PlaceholderFragment() {}
 
         public void setController(RootActivityController controller){
@@ -218,9 +237,11 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+            this.inflater = inflater;
+            this.container = container;
             View rootView = inflater.inflate(R.layout.fragment_root, container, false);
             //set content of page
-            TicketViewModel[] tickets = controller.getTicketsBySelectedDictionary();
+            tickets = controller.getTicketsBySelectedDictionary();
 
             Point size = new Point();
             controller.activity.getWindowManager().getDefaultDisplay().getSize(size);
@@ -228,11 +249,11 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
             int halfScreenWidth = (int)(screenWidth * 0.5);
 
             GridLayout root = ViewExtensions.findViewById(rootView, R.id.rootLayout);
-            LinearLayout col1 = new LinearLayout(inflater.getContext());
+            col1 = new LinearLayout(inflater.getContext());
             col1.setOrientation(LinearLayout.VERTICAL);
             col1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
-            LinearLayout col2 = new LinearLayout(inflater.getContext());
+            col2 = new LinearLayout(inflater.getContext());
             col2.setOrientation(LinearLayout.VERTICAL);
             col2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
@@ -243,8 +264,9 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
             param2.width = halfScreenWidth;
             root.addView(col2, param2);
 
-            OnTicketClickListener listener = new OnTicketClickListener(new ShowTicketPopup(controller, rootView),controller);
+            listener = new OnTicketClickListener(new ShowTicketPopup(controller, rootView),controller);
             //loop tickets
+            /*
             for (int i=0; i < tickets.length ; ++i) {
                 TicketViewModel ticket = tickets[i];
                 View item = inflater.inflate( R.layout.ticket_item_template , container, false);
@@ -265,9 +287,43 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                 }else {
                     col2.addView(item);
                 }
-            }
+            }*/
+            search(null);
             controller.activity.setTitle(controller.getSelectedDictionary().getTitle());
             return rootView;
+        }
+
+        public void search(String query){
+            col2.removeAllViews();
+            col1.removeAllViews();
+            int index = 0;
+            for (int i=0; i < tickets.length ; ++i) {
+                TicketViewModel ticket = tickets[i];
+                String text1 =ticket.getText(TicketViewModel.SideTypes.Back);
+                String text2 =ticket.getText(TicketViewModel.SideTypes.Front);
+                if(query != null && !text1.contains(query) && !text2.contains(query)){
+                    continue;
+                }
+                index++;
+                View item = inflater.inflate( R.layout.ticket_item_template , container, false);
+                item.findViewById(R.id.ticket_item_container)
+                        .setBackgroundResource(BaseActivity.getDrawableBackgroundId(ticket.getBackground()));
+                item.setOnClickListener(new OnClickListener(ticket, listener));
+                //adapter for list of words for one ticket
+                ArrayAdapter<String> adapter = new ArrayAdapter<String>(inflater.getContext(),
+                        R.layout.list_item_word_template,
+                        ticket.getDisplayLearningText());
+                ListView list = ViewExtensions.findViewById(item, R.id.learning_listOfFirst);
+                list.setAdapter(adapter);
+                list.setOnItemClickListener(new OnItemClickListener(ticket, listener));
+                BaseActivity.setHeightListView(list, adapter);
+                //separate tickets by 2 columns
+                if(index % 2 == 0){
+                    col1.addView(item);
+                }else {
+                    col2.addView(item);
+                }
+            }
         }
     }
 
@@ -336,7 +392,7 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                     addDictionaryPopup.setAddClickListener(new AddDictionaryPopup.OnAddListener() {
                         @Override
                         public void onAddClick(String newtext) {
-                            controller.addNewDictionary(newtext);
+                            controller.addNewDictionary(controller.userSettings.getDbActivateSettings(),newtext);
                             UpdateDraverList();
                         }
                     });
@@ -344,7 +400,7 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                     return true;
                 case R.id.actionbar_top_btn_remove_dictionary:
                     if(selected != null){
-                        controller.removeDictionary(selected);
+                        controller.removeDictionary(controller.userSettings.getDbActivateSettings(),selected);
                         UpdateDraverList();
                     }
                     return true;

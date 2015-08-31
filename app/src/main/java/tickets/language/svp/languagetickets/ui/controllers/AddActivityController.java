@@ -14,6 +14,6 @@ public class AddActivityController extends ActivityController<AddTicketActivity>
     }
 
     public void markAsLearned(TicketViewModel ticket) {
-        repository.add(TicketQueries.addAsLearned(ticket));
+        repository.add(TicketQueries.addAsLearned(userSettings.getDbActivateSettings(),ticket));
     }
 }

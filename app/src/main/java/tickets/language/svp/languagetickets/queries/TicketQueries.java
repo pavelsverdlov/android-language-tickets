@@ -6,6 +6,7 @@ import java.util.ArrayList;
 
 import tickets.language.svp.languagetickets.domain.Consts;
 import tickets.language.svp.languagetickets.domain.IQueryObject;
+import tickets.language.svp.languagetickets.domain.db.DbActivateSettings;
 import tickets.language.svp.languagetickets.domain.model.DictionaryDto;
 import tickets.language.svp.languagetickets.domain.model.LanguageDto;
 import tickets.language.svp.languagetickets.domain.model.LearnTicketDto;
@@ -17,27 +18,28 @@ import tickets.language.svp.languagetickets.ui.viewModel.TicketViewModel;
  * Created by Pasha on 2/1/2015.
  */
 public class TicketQueries {
-    public static IQueryObject<TicketViewModel> addNew(TicketViewModel ticket){
-        return new TicketViewModel.AddTicketQuery(ticket);
+    public static IQueryObject<TicketViewModel> addNew(DbActivateSettings set, TicketViewModel ticket){
+        return new TicketViewModel.AddTicketQuery(set,ticket);
     }
-    public static IQueryObject<TicketViewModel> getByDictionary(DictionaryViewModel dictionary){
-        return new GetByDictionary(dictionary);
-    }
-
-    public static IQueryObject<TicketViewModel> remove(TicketViewModel ticket) {
-        return new TicketViewModel.RemoveQuery(ticket);
+    public static IQueryObject<TicketViewModel> getByDictionary(DbActivateSettings set, DictionaryViewModel dictionary){
+        return new GetByDictionary(set, dictionary);
     }
 
-    public static IQueryObject<TicketViewModel> update(TicketViewModel ticket) {
-        return new TicketViewModel.UpdateQuery(ticket);
+    public static IQueryObject<TicketViewModel> remove(DbActivateSettings set, TicketViewModel ticket) {
+        return new TicketViewModel.RemoveQuery(set, ticket);
     }
 
-    public static IQueryObject addAsLearned(TicketViewModel ticket) {
-        return new TicketViewModel.AddAsLearned(ticket);
+    public static IQueryObject<TicketViewModel> update(DbActivateSettings set, TicketViewModel ticket) {
+        return new TicketViewModel.UpdateQuery(set,ticket);
+    }
+
+    public static IQueryObject addAsLearned(DbActivateSettings set, TicketViewModel ticket) {
+        return new TicketViewModel.AddAsLearned(set,ticket);
     }
 
     public static class GetByDictionary extends AQueryObject<TicketViewModel> {
-        public GetByDictionary(DictionaryViewModel dictionary) {
+        public GetByDictionary(DbActivateSettings set, DictionaryViewModel dictionary) {
+            super(set);
             boolean isLearned = dictionary == Consts.Dictionary.Learned;
             boolean isAll = dictionary == Consts.Dictionary.All;
             query.append(
@@ -63,15 +65,13 @@ public class TicketQueries {
                 );
             } else{
                query.append(
-                    "LEFT JOIN tb_ticket_dictionaries TD1 ON TD1.idTicket = L1.id "
-                    + "LEFT JOIN tb_dictionaries D1 ON D1.id = TD1.idDictionary "
+                    "JOIN tb_ticket_dictionaries TD1 ON TD1.idTicket = L1.id "
+                    + "JOIN tb_dictionaries D1 ON D1.id = TD1.idDictionary "
                );
             }
             if(isAll) {
-                query.append("GROUP BY L1.id");
+                //query.append("GROUP BY L1.id");
             }
-
-
             if(!isAll && !isLearned){
                 query.append("WHERE TD1.idDictionary=" + dictionary.dto.id);
             }
@@ -101,7 +101,8 @@ public class TicketQueries {
                         }
                         ddto.title = cursor.getString(cursor.getColumnIndex("D1title"));
                         dto.dictionary = ddto;
-                        list.add(new TicketViewModel(dto));
+                        TicketViewModel vm = new TicketViewModel(dto);
+                        list.add(vm);
                     } while (cursor.moveToNext());
                 }finally {
                     cursor.close();

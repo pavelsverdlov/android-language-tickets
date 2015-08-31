@@ -8,6 +8,18 @@
         <!--android:layout_width="fill_parent"-->
         <!--android:layout_height="fill_parent"-->
         <!--/>-->
-    <ListView android:id="@android:id/list" android:layout_width="match_parent"
+    <Button
+        android:id="@+id/filebrouser_btn_back"
+        style="@style/ButtonStyle"
+        android:background="@color/common_action_bar_splitter"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_back"
+        android:textAlignment="viewStart"
+        android:text="Back"
+        />
+    <ListView android:id="@android:id/list"
+        android:layout_marginTop="@dimen/abc_action_button_min_height_material"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 </RelativeLayout>

@@ -5,6 +5,7 @@ import android.database.Cursor;
 import java.util.ArrayList;
 
 import tickets.language.svp.languagetickets.domain.IQueryObject;
+import tickets.language.svp.languagetickets.domain.db.DbActivateSettings;
 import tickets.language.svp.languagetickets.domain.model.LanguageDto;
 import tickets.language.svp.languagetickets.ui.viewModel.LanguageViewModel;
 
@@ -12,12 +13,13 @@ import tickets.language.svp.languagetickets.ui.viewModel.LanguageViewModel;
  * Created by Pasha on 2/8/2015.
  */
 public class LanguageQueries{
-    public static IQueryObject<LanguageViewModel> GetAll(){
-        return new GetAll();
+    public static IQueryObject<LanguageViewModel> GetAll(DbActivateSettings set){
+        return new GetAll(set);
     }
 
     public static final class GetAll extends AQueryObject<LanguageViewModel> {
-        public GetAll(){
+        public GetAll(DbActivateSettings set){
+            super(set);
             query.append("SELECT id,name FROM " + dbLanguagesTableName);
         }
         @Override

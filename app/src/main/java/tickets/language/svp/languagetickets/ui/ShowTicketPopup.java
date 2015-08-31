@@ -76,6 +76,12 @@ public class ShowTicketPopup {
         view.findViewById(R.id.frame_ticket_clicked_base)
             .setBackground(BaseActivity.getDrawableSecondBackground(ticket.getBackground()));
 
+        if(controller.getSelectedDictionary().isLearned()) {
+            view.findViewById(R.id.actionbar_bottom_btn_edit).setVisibility(View.INVISIBLE);
+            view.findViewById(R.id.actionbar_bottom_btn_ok).setVisibility(View.GONE);
+            view.findViewById(R.id.actionbar_bottom_btn_no).setVisibility(View.GONE);
+        }
+
         dialog.show();
     }
 }
