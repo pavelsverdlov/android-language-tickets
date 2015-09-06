@@ -335,6 +335,11 @@ public class Database {
                 idDictionary, idTicket, getDateFormatter().format(added))
                 .toString();
     }
+    private static final String selectCountOfLearnedTicketTableQueryFormat =
+            "SELECT COUNT(*) AS 'count' FROM " + dbTicketsLearnedTableName;
+    protected String getCountOfLearnedTickets(){
+        return selectCountOfLearnedTicketTableQueryFormat;
+    }
 
     private static final String deleteLearnedTicketTableQueryFormat =
             "DELETE FROM " + dbTicketsLearnedTableName + " WHERE idTicket = '%s'";

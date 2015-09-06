@@ -5,6 +5,7 @@ import android.database.Cursor;
 import java.util.ArrayList;
 import java.util.Date;
 
+import tickets.language.svp.languagetickets.domain.Consts;
 import tickets.language.svp.languagetickets.domain.IQueryObject;
 import tickets.language.svp.languagetickets.domain.db.DbActivateSettings;
 import tickets.language.svp.languagetickets.domain.model.DictionaryDto;
@@ -28,6 +29,10 @@ public class DictionaryQueries {
 
     public static IQueryObject remove(DbActivateSettings sett, DictionaryViewModel dic) {
         return new Remove(sett,dic);
+    }
+
+    public static IQueryObject<DictionaryViewModel> getLearned(DbActivateSettings sett) {
+        return new GetLearned(sett);
     }
 
     public static final class Remove extends AQueryObject<DictionaryViewModel> {
@@ -98,6 +103,36 @@ public class DictionaryQueries {
                 }
             }
             return list.toArray(new DictionaryViewModel[list.size()]);
+        }
+    }
+
+    public static final class GetLearned extends AQueryObject<DictionaryViewModel> {
+        public GetLearned(DbActivateSettings sett) {
+            super(sett);
+        }
+
+
+        @Override
+        public String[] getQuery() {
+            return new String[]{
+                getCountOfLearnedTickets()
+            };
+        }
+
+        @Override
+        public DictionaryViewModel[] parse(Cursor cursor) {
+            DictionaryViewModel dic = Consts.Dictionary.Learned;
+            if (cursor.getCount() > 0){
+                try {
+                    cursor.moveToFirst();
+                    do {
+                        dic.dto.length = cursor.getInt(cursor.getColumnIndex("count"));
+                    } while (cursor.moveToNext());
+                }finally {
+                    cursor.close();
+                }
+            }
+            return new DictionaryViewModel[] { dic };
         }
     }
 

@@ -93,9 +93,11 @@ public abstract class BaseActivity<TA extends BaseActivity,TC extends ActivityCo
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        if(savedInstanceState != null){
+            this.getIntent().putExtras(savedInstanceState);
+        }
         storage = new Storage(this.getIntent());
-
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
     }
 
     @Override
@@ -221,7 +223,7 @@ public abstract class BaseActivity<TA extends BaseActivity,TC extends ActivityCo
         listView.requestLayout();
     }
 
-    protected void restartActivity(Storage storage){
+    public void restartActivity(Storage storage){
         finish();
         Intent intent = getIntent();
         storage.putTo(intent);

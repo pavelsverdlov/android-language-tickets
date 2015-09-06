@@ -4,6 +4,8 @@ import tickets.language.svp.languagetickets.RootActivity;
 import tickets.language.svp.languagetickets.domain.Repository;
 import tickets.language.svp.languagetickets.ui.viewModel.TicketViewModel;
 
+import static tickets.language.svp.languagetickets.ui.ActivityOperationResult.EditTicket;
+
 /**
  * Created by Pasha on 2/8/2015.
  */
@@ -42,5 +44,16 @@ public class RootActivityController extends ActivityController<RootActivity> {
                 break;
         }
         updateTicket(userSettings.getDbActivateSettings(),ticket);
+    }
+
+    @Override
+    public void goToEditTicketActivity(){
+        activity.storage.setScrollPosition(activity.getScrollPosition());
+        super.goToEditTicketActivity();
+    }
+
+    public void restartActivityWithSaveStorage(){
+        activity.storage.setScrollPosition(activity.getScrollPosition());
+        activity.restartActivity(activity.storage);
     }
 }

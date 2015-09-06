@@ -24,33 +24,25 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
-                <TextView
-                    style="@style/title"
+                <Button
+                    android:layout_marginLeft="@dimen/margin"
                     android:layout_alignParentLeft="true"
-                    android:id="@+id/popup_show_language"
+                    android:textSize="@dimen/title_text_size"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="7dp"
-                    android:layout_marginLeft="40dp"
+                    android:id="@+id/popup_show_language"
+                    style="?android:attr/borderlessButtonStyle"
                     android:text="Language" />
                 <ImageButton
                     android:padding="0dp"
-                    android:layout_alignParentLeft="true"
-                    android:id="@+id/menu_btn_turn_over"
-                    style="@style/ButtonStyle"
-                    android:layout_width="35dp"
-                    android:layout_height="35dp"
-                    android:src="@drawable/ic_action_refresh" />
-                <ImageButton
-                    android:padding="0dp"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginRight="5dp"
                     android:layout_alignParentRight="true"
                     android:id="@+id/actionbar_bottom_btn_edit"
-                    style="@style/ButtonStyle"
+                    style="?android:attr/borderlessButtonStyle"
                     android:layout_width="35dp"
                     android:layout_height="35dp"
-                    android:layout_weight="1"
-                    android:contentDescription="@string/buttondesc"
-                    android:src="@drawable/ic_action_edit" />
+                    android:contentDescription="@string/buttondesc" />
             </RelativeLayout>
             <TextView
                 style="@style/input_text_control"
@@ -71,22 +63,20 @@
                 android:orientation="horizontal" >
                     <ImageButton
                         android:id="@+id/actionbar_bottom_btn_ok"
-                        style="@style/ButtonStyle"
+                        style="?android:attr/borderlessButtonStyle"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:contentDescription="@string/buttondesc"
                         android:src="@drawable/ic_accept"
                         android:layout_marginRight="2.5dp"
                         />
                     <ImageButton
                         android:layout_marginLeft="2.5dp"
                         android:id="@+id/actionbar_bottom_btn_no"
-                        style="@style/ButtonStyle"
+                        style="?android:attr/borderlessButtonStyle"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"
                         android:layout_weight="1"
-                        android:contentDescription="@string/buttondesc"
                         android:src="@drawable/ic_action_cancel"
                         />
             </LinearLayout>

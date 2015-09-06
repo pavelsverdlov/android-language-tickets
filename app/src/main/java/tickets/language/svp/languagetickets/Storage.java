@@ -19,6 +19,7 @@ public final class Storage {
     //public final static String USER = "ru.alexanderklimov.myapp.USER";
  //   private final String storageKey = "storage";
     private final String selectedTicketKey = "selectedTicket";
+    private final String scrollPositionKey = "scrollPosition";
     private final Bundle bundle;
 //    private Intent intent;
 
@@ -84,5 +85,13 @@ public final class Storage {
         ObjectInputStream ois = new ObjectInputStream( bais );
         Object o = ois.readObject();
         return o;
+    }
+
+    public void setScrollPosition(int scrollPosition) {
+        bundle.putSerializable(scrollPositionKey, scrollPosition);
+    }
+    public int getScrollPosition() {
+        Object o = bundle.getSerializable(scrollPositionKey);
+        return o == null ? 0 : (Integer)o;
     }
 }

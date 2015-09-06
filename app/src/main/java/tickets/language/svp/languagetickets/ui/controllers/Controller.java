@@ -64,7 +64,9 @@ public class Controller{
             all.add(dir);
         }
         all.add(Consts.Dictionary.All);
-        all.add(Consts.Dictionary.Learned);
+        //get count of learned
+        DictionaryViewModel[] learned = repository.get(DictionaryQueries.getLearned(sett));
+        all.add(learned[0]);
         return all;//.toArray(new DictionaryViewModel[all.size()]);
     }
     public void removeDictionary(DbActivateSettings sett, DictionaryViewModel selected) {
@@ -103,6 +105,10 @@ public class Controller{
 
     public LanguageViewModel[] getLanguages(DbActivateSettings sett)    {
         return repository.get(LanguageQueries.GetAll(sett));
+    }
+
+    public void revertToLearning(DbActivateSettings sett, TicketViewModel ticket) {
+        repository.update(TicketQueries.revertToLearning(sett, ticket));
     }
 /*
     private void tryInitSystemDictionaries(){

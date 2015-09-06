@@ -278,6 +278,25 @@ public class TicketViewModel implements Serializable {
             return new TicketViewModel[0];
         }
     }
+    public static class RevertToLearning extends AQueryObject<TicketViewModel>{
+        private final LearnTicketDto ticket;
+        public RevertToLearning(DbActivateSettings settings,TicketViewModel vm) {
+            super(settings);
+            ticket = vm.dto;
+        }
 
+        @Override
+        public String[] getQuery() {
+            return new String[]{
+                getInsertTicketDictionariesTableQuery(ticket.dictionary.id,ticket.id),
+                getDeleteLearnedTicketTableQuery(ticket.id),
+            };
+        }
+
+        @Override
+        public TicketViewModel[] parse(Cursor cursor) {
+            return new TicketViewModel[0];
+        }
+    }
 
 }

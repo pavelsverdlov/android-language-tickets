@@ -19,6 +19,7 @@ import android.widget.ArrayAdapter;
 import android.widget.GridLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.SearchView;
 
 import tickets.language.svp.languagetickets.ui.AddDictionaryPopup;
@@ -32,20 +33,19 @@ import tickets.language.svp.languagetickets.ui.viewModel.TicketViewModel;
 
 import static tickets.language.svp.languagetickets.ui.ActivityOperationResult.EditTicket;
 
-
 public class RootActivity extends BaseActivity<RootActivity,RootActivityController>{
     private PlaceholderFragment fragment;
     private Drawer drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        savedInstanceState = null;
         initAsRoot(this);
         controller = new RootActivityController(this);
         super.onCreate(savedInstanceState);
+        savedInstanceState = null;
         setContentView(R.layout.activity_root);
-        setTitle(controller.getSelectedDictionary().getTitle());
-        drawer = new Drawer(getTitle().toString(), new DrawerItemClickListener(){
+        updateTitle();
+        drawer = new Drawer(new DrawerItemClickListener(){
             @Override
             public void onDictionarySelected(DictionaryViewModel selected){
                 controller.setCurrentDictionary(selected);
@@ -63,46 +63,15 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                     .add(R.id.container, fragment)
                     .commit();
         }
-    /*
-        GoogleApiClient mGoogleApiClient;
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Drive.API)
-                .addScope(Drive.SCOPE_FILE)
-                .addScope(Plus.SCOPE_PLUS_LOGIN)
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(Bundle bundle) {
+    }
 
-                    }
+    private void updateTitle(){
+        DictionaryViewModel d = controller.getSelectedDictionary();
+        setTitle(d.getTitle() + " (" + d.getLength() + ")");
+    }
 
-                    @Override
-                    public void onConnectionSuspended(int i) {
-
-                    }
-                })
-                .addOnConnectionFailedListener(new GoogleApiClient.OnConnectionFailedListener() {
-                    @Override
-                    public void onConnectionFailed(ConnectionResult connectionResult) {
-
-                    }
-                })
-                .build();
-        mGoogleApiClient.connect();
-
-        Query query = new Query.Builder()
-                .addFilter(Filters.eq(SearchableField.TITLE, "db_languagetickets"))
-                .build();
-        Drive.DriveApi.query(mGoogleApiClient, query)
-                .setResultCallback(new ResultCallback<DriveApi.MetadataBufferResult>() {
-                                               @Override
-                                               public void onResult(DriveApi.MetadataBufferResult result) {
-                                                   if (!result.getStatus().isSuccess()) {
-                                                       return;
-                                                   }
-                                               }
-                                           }
-        );
-        */
+    public int getScrollPosition(){
+        return PlaceholderFragment.getScrollView(fragment.getView()).getScrollY();
     }
     /** ========================== */
     /**
@@ -120,13 +89,10 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
+        controller.restartActivityWithSaveStorage();
         // Pass any configuration change to the drawer toggles
-        drawer.onConfigurationChanged(newConfig);
+        //drawer.onConfigurationChanged(newConfig);
     }
-
-
-
-    /** ========================== */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -215,11 +181,12 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                 }
         }
         if(resultCode == RESULT_OK){
-            restartActivity();
+            restartActivity(controller.activity.storage);
 //            finish();
 //            startActivity(getIntent());
         }
     }
+
 
     public static class PlaceholderFragment extends Fragment {
         private RootActivityController controller;
@@ -231,9 +198,14 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
         LinearLayout col2;
         public PlaceholderFragment() {}
 
+        public static ScrollView getScrollView(View rootView){
+            return ViewExtensions.findViewById(rootView,R.id.root_scrollview);
+        }
+
         public void setController(RootActivityController controller){
             this.controller = controller;
         }
+        //onViewCreated
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -265,31 +237,16 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
             root.addView(col2, param2);
 
             listener = new OnTicketClickListener(new ShowTicketPopup(controller, rootView),controller);
-            //loop tickets
-            /*
-            for (int i=0; i < tickets.length ; ++i) {
-                TicketViewModel ticket = tickets[i];
-                View item = inflater.inflate( R.layout.ticket_item_template , container, false);
-                item.findViewById(R.id.ticket_item_container)
-                    .setBackgroundResource(BaseActivity.getDrawableBackgroundId(ticket.getBackground()));
-                item.setOnClickListener(new OnClickListener(ticket, listener));
-                //adapter for list of words for one ticket
-                ArrayAdapter<String> adapter = new ArrayAdapter<String>(inflater.getContext(),
-                        R.layout.list_item_word_template,
-                        ticket.getDisplayLearningText());
-                ListView list = ViewExtensions.findViewById(item, R.id.learning_listOfFirst);
-                list.setAdapter(adapter);
-                list.setOnItemClickListener(new OnItemClickListener(ticket, listener));
-                BaseActivity.setHeightListView(list, adapter);
-                //separate tickets by 2 columns
-                if(i % 2 == 0){
-                    col1.addView(item);
-                }else {
-                    col2.addView(item);
-                }
-            }*/
             search(null);
-            controller.activity.setTitle(controller.getSelectedDictionary().getTitle());
+            final ScrollView sv = getScrollView(rootView);
+            sv.post(new Runnable() {
+                @Override
+                public void run() {
+                    int pos = controller.activity.storage.getScrollPosition();
+                    sv.scrollTo(0,pos);
+                }
+            });
+            controller.activity.updateTitle();
             return rootView;
         }
 
@@ -325,6 +282,8 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                 }
             }
         }
+
+
     }
 
     public abstract class DrawerItemClickListener {
@@ -335,10 +294,9 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
         private ActionBarDrawerToggle mDrawerToggle;
         private DrawerLayout mDrawerLayout;
         private ListView mDrawerList;
-        private final String title;
+        private String title;
 
-        public Drawer(final String title, final DrawerItemClickListener listener) {
-            this.title= title;
+        public Drawer(final DrawerItemClickListener listener) {
             mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
             mDrawerList = (ListView) findViewById(R.id.left_drawer);
 
@@ -373,9 +331,12 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                 }
                 /** Called when a drawer has settled in a completely open state. */
                 public void onDrawerOpened(View drawerView) {
-                    getActionBar().setTitle(R.string.drawer_title_dictionaries);
+                    title = getActionBar().getTitle().toString();
                     invalidateOptionsMenu();
                     UpdateDraverList();
+                    String title = getString(R.string.drawer_title_dictionaries) +
+                            " (" + mDrawerList.getAdapter().getCount() + ")";
+                    getActionBar().setTitle(title);
                 }
             };
             // Set the drawer toggle as the DrawerListener

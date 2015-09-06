@@ -37,6 +37,10 @@ public class TicketQueries {
         return new TicketViewModel.AddAsLearned(set,ticket);
     }
 
+    public static IQueryObject revertToLearning(DbActivateSettings set, TicketViewModel ticket) {
+        return new TicketViewModel.RevertToLearning(set,ticket);
+    }
+
     public static class GetByDictionary extends AQueryObject<TicketViewModel> {
         public GetByDictionary(DbActivateSettings set, DictionaryViewModel dictionary) {
             super(set);
@@ -75,6 +79,7 @@ public class TicketQueries {
             if(!isAll && !isLearned){
                 query.append("WHERE TD1.idDictionary=" + dictionary.dto.id);
             }
+            query.append(" ORDER BY S1.correctCount ASC, S2.correctCount ASC, S1.incorrectCount DESC, S2.incorrectCount DESC");
         }
         @Override
         public String[] getQuery() {

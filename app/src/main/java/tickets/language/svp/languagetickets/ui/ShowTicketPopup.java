@@ -2,6 +2,7 @@ package tickets.language.svp.languagetickets.ui;
 
 import android.app.AlertDialog;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -48,26 +49,18 @@ public class ShowTicketPopup {
             }
         });
 
-        ImageButton edit = (ImageButton)view.findViewById(R.id.actionbar_bottom_btn_edit);
-        edit.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                dialog.cancel();
-                controller.goToEditTicketActivity();
-            }
-        });
+
     }
 
-    public void show(TicketViewModel ticket){
+    public void show(final TicketViewModel ticket){
         this.ticket = ticket;
         type =  ticket.getInvertOfCurrentSideType();
         TextView txt = (TextView)view.findViewById(R.id.popup_show_learning_text);
         txt.setText(StringHelper.joinByLineSeparator(ticket.getLearningText(type)));
 
-        //TextView data = (TextView)view.findViewById(R.id.popup_show_data);
-       // data.setText(ticket.getData(type));
-
-        TextView lang = (TextView)view.findViewById(R.id.popup_show_language);
+        Button lang = ViewExtensions.findViewById(view,R.id.popup_show_language);
         lang.setText(ticket.getLanguage(type).getTitle().toUpperCase());
+        final ImageButton edit = ViewExtensions.findViewById(view, R.id.actionbar_bottom_btn_edit);
 
         int id = BaseActivity.getDrawableBackgroundId(ticket.getBackground());
         view.findViewById(R.id.frame_ticket_clicked_top).setBackgroundResource(id);
@@ -77,9 +70,33 @@ public class ShowTicketPopup {
             .setBackground(BaseActivity.getDrawableSecondBackground(ticket.getBackground()));
 
         if(controller.getSelectedDictionary().isLearned()) {
-            view.findViewById(R.id.actionbar_bottom_btn_edit).setVisibility(View.INVISIBLE);
             view.findViewById(R.id.actionbar_bottom_btn_ok).setVisibility(View.GONE);
             view.findViewById(R.id.actionbar_bottom_btn_no).setVisibility(View.GONE);
+
+            edit.setImageResource(R.drawable.ic_action_undo);
+            edit.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    controller.revertToLearning(ticket);
+                    dialog.cancel();
+                    controller.activity.restartActivity();
+                }
+            });
+        }else{
+            edit.setImageResource(R.drawable.ic_action_edit);
+            edit.setOnClickListener(new View.OnClickListener() {
+                public void onClick(View v) {
+                    dialog.cancel();
+                    controller.goToEditTicketActivity();
+                }
+            });
+            lang.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ticket.turnOver();
+                    show(ticket);
+                    //TODO: should refresh one ticket controller.restartActivityWithSaveStorage();
+                }
+            });
         }
 
         dialog.show();

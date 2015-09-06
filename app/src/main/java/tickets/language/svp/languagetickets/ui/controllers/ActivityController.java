@@ -61,6 +61,9 @@ public abstract class ActivityController<T extends Activity> extends Controller 
     public TicketViewModel[] getTickets(DictionaryViewModel dictionary){
         return super.getTickets(userSettings.getDbActivateSettings(),dictionary);
     }
+    public void revertToLearning(TicketViewModel ticket){
+        super.revertToLearning(userSettings.getDbActivateSettings(), ticket);
+    }
 
     public void goToAddTicketActivity(){
         goToActivity(AddNewTicket);
