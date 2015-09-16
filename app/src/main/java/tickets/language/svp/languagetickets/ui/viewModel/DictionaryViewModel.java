@@ -31,7 +31,7 @@ public class DictionaryViewModel implements Serializable {
     }
 
     public boolean isSys() {
-        return dto.sys == 1;
+        return this == Consts.Dictionary.Learned || this == Consts.Dictionary.All;
     }
 
     public boolean isLearned() {

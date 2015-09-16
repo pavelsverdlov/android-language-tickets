@@ -12,19 +12,25 @@
         />
     <item
         android:id="@+id/actionbar_top_btn_add_new"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         android:showAsAction="ifRoom"
         android:icon="@drawable/ic_action_new"
         android:title=""
         />
+    <item android:id="@+id/actionbar_root_activity_column_switcher"
+        android:title="@string/title_actionbar_root_activity_1column_switcher"
+        android:showAsAction="never" />
+
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
-        android:orderInCategory="100"
         android:showAsAction="never" />
+
     <item android:id="@+id/action_startgamelearning"
+        android:visible="false"
+        android:enabled="false"
         android:title="@string/action_game_learning"
-        android:orderInCategory="100"
         android:showAsAction="never" />
+
     <!--For drawer-->
 
     <item

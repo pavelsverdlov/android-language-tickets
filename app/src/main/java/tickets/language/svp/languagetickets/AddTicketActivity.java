@@ -35,6 +35,7 @@ import tickets.language.svp.languagetickets.ui.BaseActivity;
 import tickets.language.svp.languagetickets.ui.LanguageNavigationAdapter;
 import tickets.language.svp.languagetickets.ui.TicketColors;
 import tickets.language.svp.languagetickets.ui.ViewExtensions;
+import tickets.language.svp.languagetickets.ui.YesNoDialog;
 import tickets.language.svp.languagetickets.ui.adapters.WordsEditAdapter;
 import tickets.language.svp.languagetickets.ui.controllers.AddActivityController;
 import tickets.language.svp.languagetickets.ui.viewModel.DictionaryViewModel;
@@ -42,6 +43,7 @@ import tickets.language.svp.languagetickets.ui.viewModel.LanguageViewModel;
 import tickets.language.svp.languagetickets.ui.viewModel.TicketViewModel;
 //http://stackoverflow.com/questions/8312344/how-to-add-a-dropdown-item-on-the-action-bar
 public class AddTicketActivity extends BaseActivity<AddTicketActivity,AddActivityController> {
+    private static int lastDicSelected = -1;
     private PlaceholderFragment container;
     private TicketViewModel editing;
     private ActionBarController actionBar;
@@ -74,7 +76,15 @@ public class AddTicketActivity extends BaseActivity<AddTicketActivity,AddActivit
         if(editing.isNew()) {
             editing.setLanguage(TicketViewModel.SideTypes.Back, languages[0]);
             editing.setLanguage(TicketViewModel.SideTypes.Front, languages[1]);
-            editing.setDictionary(dictionaries.get(0));
+
+            DictionaryViewModel d = dictionaries.get(0);
+            for (DictionaryViewModel dic : dictionaries){
+                if(dic.dto.id == lastDicSelected){
+                    d = dic;
+                    break;
+                }
+            }
+            editing.setDictionary(d);
         }
         if (savedInstanceState == null) {
             updatePlaceholder();
@@ -143,13 +153,29 @@ public class AddTicketActivity extends BaseActivity<AddTicketActivity,AddActivit
                 onBackPressed();
                 return true;
             case R.id.add_ticket_dictionaries_menu_markAsLearned:
-                controller.markAsLearned(editing);
-                this.setResult(RESULT_OK);
-                super.onBackPressed();
+                YesNoDialog.Create(this,this.getLayoutInflater())
+                    .setOnYesNoClickListener(new YesNoDialog.OnYesNoClickListener() {
+                        @Override
+                        public void onYesClick() {
+                            controller.markAsLearned(editing);
+                            setResult(RESULT_OK);
+                            onBackPressedBase();
+                        }
+                    })
+                    .show(getString(R.string.title_mark_as_learned),
+                            getString(R.string.ask_text_mark_as_learned));
                 break;
             case R.id.add_ticket_dictionaries_menu_delete:
-                controller.removeTicket(editing);
-                onBackPressed();
+                YesNoDialog.Create(this,this.getLayoutInflater())
+                    .setOnYesNoClickListener(new YesNoDialog.OnYesNoClickListener() {
+                        @Override
+                        public void onYesClick() {
+                            controller.removeTicket(editing);
+                            onBackPressed();
+                        }
+                    })
+                    .show(getString(R.string.title_delete_card),
+                          getString(R.string.ask_text_delete_card));
                 break;
             case R.id.add_ticket_dictionaries_menu_selectcolor:
                 SelectColorPopup selectColorsPopup = new SelectColorPopup(container.getView());
@@ -164,6 +190,9 @@ public class AddTicketActivity extends BaseActivity<AddTicketActivity,AddActivit
         }
 
         return super.onOptionsItemSelected(item);
+    }
+    public void onBackPressedBase() {
+        super.onBackPressed();
     }
     @Override
     public void onBackPressed() {
@@ -300,6 +329,7 @@ public class AddTicketActivity extends BaseActivity<AddTicketActivity,AddActivit
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                     DictionaryViewModel selected = dictionaries.get(position);
                     editing.setDictionary(selected);
+                    lastDicSelected = selected.dto.id;
                 }
                 @Override
                 public void onNothingSelected(AdapterView<?> parent) {}

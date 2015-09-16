@@ -5,7 +5,6 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -22,10 +21,14 @@ import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.SearchView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import tickets.language.svp.languagetickets.ui.AddDictionaryPopup;
 import tickets.language.svp.languagetickets.ui.BaseActivity;
 import tickets.language.svp.languagetickets.ui.ShowTicketPopup;
 import tickets.language.svp.languagetickets.ui.ViewExtensions;
+import tickets.language.svp.languagetickets.ui.YesNoDialog;
 import tickets.language.svp.languagetickets.ui.controllers.RootActivityController;
 import tickets.language.svp.languagetickets.ui.listeners.*;
 import tickets.language.svp.languagetickets.ui.viewModel.DictionaryViewModel;
@@ -36,6 +39,7 @@ import static tickets.language.svp.languagetickets.ui.ActivityOperationResult.Ed
 public class RootActivity extends BaseActivity<RootActivity,RootActivityController>{
     private PlaceholderFragment fragment;
     private Drawer drawer;
+    private Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,7 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
             }
         });
 
+        getActionBar().setDisplayShowHomeEnabled(false);
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
 
@@ -73,6 +78,11 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
     public int getScrollPosition(){
         return PlaceholderFragment.getScrollView(fragment.getView()).getScrollY();
     }
+
+    public void updateTicket(TicketViewModel ticket){
+        fragment.updateItemView(ticket);
+    }
+
     /** ========================== */
     /**
      * When using the ActionBarDrawerToggle, you must call it during
@@ -96,6 +106,7 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         getMenuInflater().inflate(R.menu.menu_root, menu);
 
         SearchManager searchManager =(SearchManager) getSystemService(Context.SEARCH_SERVICE);
@@ -125,7 +136,8 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
         R.id.root_action_search,
         R.id.actionbar_top_btn_add_new,
         R.id.action_settings,
-        R.id.action_startgamelearning
+        R.id.action_startgamelearning,
+        R.id.actionbar_root_activity_column_switcher
     };
     private final int[] drawermenukeys = new int[]{
             R.id.actionbar_top_btn_add_new_dictionary,
@@ -142,6 +154,14 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
         for (int drawermenukey : drawermenukeys) {
             menu.findItem(drawermenukey).setVisible(drawerOpen);
         }
+        menu.findItem(R.id.action_startgamelearning).setVisible(false);
+      //  menu.findItem(R.id.action_settings).setVisible(false);
+        int columnsCount = controller.userSettings.getViewColumnsCount();
+        menu.findItem(R.id.actionbar_root_activity_column_switcher)
+                .setTitle(columnsCount == 2 ?
+                    R.string.title_actionbar_root_activity_1column_switcher :
+                    R.string.title_actionbar_root_activity_2column_switcher
+                );
         return super.onPrepareOptionsMenu(menu);
     }
     @Override
@@ -161,6 +181,13 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                 return true;
             case R.id.action_settings:
                 controller.goToAppSettingsActivity();
+                return true;
+            case R.id.actionbar_root_activity_column_switcher:
+                int columnsCount = controller.userSettings.getViewColumnsCount();
+                columnsCount = columnsCount == 1 ? 2 : 1;
+                controller.userSettings.putViewCoulumnsCount(columnsCount);
+                storage.setScrollPosition(getScrollPosition());
+                restartActivity(storage);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -189,14 +216,16 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
 
 
     public static class PlaceholderFragment extends Fragment {
+        private int columns;
+        private LinearLayout[] layouts;
         private RootActivityController controller;
         private TicketViewModel[] tickets;
+        View rootView;
         LayoutInflater inflater;
         ViewGroup container;
         OnTicketClickListener listener;
-        LinearLayout col1;
-        LinearLayout col2;
-        public PlaceholderFragment() {}
+        public PlaceholderFragment() {
+        }
 
         public static ScrollView getScrollView(View rootView){
             return ViewExtensions.findViewById(rootView,R.id.root_scrollview);
@@ -211,30 +240,11 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                                  Bundle savedInstanceState) {
             this.inflater = inflater;
             this.container = container;
-            View rootView = inflater.inflate(R.layout.fragment_root, container, false);
+            rootView = inflater.inflate(R.layout.fragment_root, container, false);
             //set content of page
             tickets = controller.getTicketsBySelectedDictionary();
 
-            Point size = new Point();
-            controller.activity.getWindowManager().getDefaultDisplay().getSize(size);
-            int screenWidth = size.x;
-            int halfScreenWidth = (int)(screenWidth * 0.5);
-
-            GridLayout root = ViewExtensions.findViewById(rootView, R.id.rootLayout);
-            col1 = new LinearLayout(inflater.getContext());
-            col1.setOrientation(LinearLayout.VERTICAL);
-            col1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            col2 = new LinearLayout(inflater.getContext());
-            col2.setOrientation(LinearLayout.VERTICAL);
-            col2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
-
-            GridLayout.LayoutParams param1 = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(0));
-            param1.width = halfScreenWidth;
-            root.addView(col1, param1);
-            GridLayout.LayoutParams param2 = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(1));
-            param2.width = halfScreenWidth;
-            root.addView(col2, param2);
+            setColumnCount(controller.userSettings.getViewColumnsCount());
 
             listener = new OnTicketClickListener(new ShowTicketPopup(controller, rootView),controller);
             search(null);
@@ -250,10 +260,22 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
             return rootView;
         }
 
+        public void setColumnCount(int columns){
+            this.columns = columns;
+            int halfScreenWidth = (controller.getScreenWidth() / columns);
+            GridLayout root = ViewExtensions.findViewById(rootView, R.id.rootLayout);
+
+            layouts = new LinearLayout[columns];
+            for (int i=0; i < columns; i++ ){
+                layouts[i] = createLinearLayout(root,i,halfScreenWidth);
+            }
+        }
         public void search(String query){
-            col2.removeAllViews();
-            col1.removeAllViews();
+            for (LinearLayout col : layouts){
+                col.removeAllViews();
+            }
             int index = 0;
+            map = new HashMap<String, View>();
             for (int i=0; i < tickets.length ; ++i) {
                 TicketViewModel ticket = tickets[i];
                 String text1 =ticket.getText(TicketViewModel.SideTypes.Back);
@@ -275,14 +297,35 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                 list.setOnItemClickListener(new OnItemClickListener(ticket, listener));
                 BaseActivity.setHeightListView(list, adapter);
                 //separate tickets by 2 columns
-                if(index % 2 == 0){
-                    col1.addView(item);
-                }else {
-                    col2.addView(item);
-                }
+                layouts[index % columns].addView(item);
+                map.put(ticket.getId(), item);
             }
         }
 
+        private Map<String,View> map;
+
+        public void updateItemView(TicketViewModel ticket){
+            View item = map.get(ticket.getId());
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(inflater.getContext(),
+                    R.layout.list_item_word_template,
+                    ticket.getDisplayLearningText());
+            ListView list = ViewExtensions.findViewById(item, R.id.learning_listOfFirst);
+            list.setAdapter(adapter);
+            list.setOnItemClickListener(new OnItemClickListener(ticket, listener));
+            BaseActivity.setHeightListView(list, adapter);
+        }
+
+        private LinearLayout createLinearLayout(GridLayout root, int index,int width ){
+            LinearLayout col = new LinearLayout(inflater.getContext());
+            col.setOrientation(LinearLayout.VERTICAL);
+            col.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            GridLayout.LayoutParams param = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(index));
+            param.width = width;
+            root.addView(col, param);
+
+            return col;
+        }
 
     }
 
@@ -310,6 +353,14 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     DictionaryViewModel select = (DictionaryViewModel)parent.getAdapter().getItem(position);
+
+                   // getActionBar().getCustomView().findViewById(R.id.actionbar_top_btn_add_new_dictionary).setVisibility(View.GONE);
+
+                    boolean vis = !select.isSys();
+                    menu.findItem(R.id.actionbar_top_btn_add_new_dictionary).setVisible(vis);
+                    menu.findItem(R.id.actionbar_top_btn_edit_dictionary).setVisible(vis);
+                    menu.findItem(R.id.actionbar_top_btn_remove_dictionary).setVisible(vis);
+
                     if(select == selected){
                         listener.onDictionarySelected(selected);
                     }
@@ -337,6 +388,10 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                     String title = getString(R.string.drawer_title_dictionaries) +
                             " (" + mDrawerList.getAdapter().getCount() + ")";
                     getActionBar().setTitle(title);
+
+                    menu.findItem(R.id.actionbar_top_btn_add_new_dictionary).setVisible(false);
+                    menu.findItem(R.id.actionbar_top_btn_edit_dictionary).setVisible(false);
+                    menu.findItem(R.id.actionbar_top_btn_remove_dictionary).setVisible(false);
                 }
             };
             // Set the drawer toggle as the DrawerListener
@@ -361,8 +416,16 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
                     return true;
                 case R.id.actionbar_top_btn_remove_dictionary:
                     if(selected != null){
-                        controller.removeDictionary(controller.userSettings.getDbActivateSettings(),selected);
-                        UpdateDraverList();
+                        YesNoDialog.Create(RootActivity.this)
+                            .setOnYesNoClickListener(new YesNoDialog.OnYesNoClickListener() {
+                                @Override
+                                public void onYesClick() {
+                                    controller.removeDictionary(controller.userSettings.getDbActivateSettings(),selected);
+                                    UpdateDraverList();
+                                }
+                            })
+                            .show(getString(R.string.title_delete_dictionary),
+                                  String.format(getString(R.string.ask_text_delete_dictionary), selected.getTitle()));
                     }
                     return true;
             }
@@ -389,3 +452,4 @@ public class RootActivity extends BaseActivity<RootActivity,RootActivityControll
 
 
 }
+

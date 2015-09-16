@@ -8,8 +8,6 @@
     android:layout_height="fill_parent"
     android:orientation="horizontal"
     android:padding="5dp"
-    android:columnCount="2"
-    android:stretchMode="columnWidth"
     tools:context="tickets.language.svp.languagetickets.RootActivity$PlaceholderFragment">
     <GridLayout
         android:id="@+id/rootLayout"

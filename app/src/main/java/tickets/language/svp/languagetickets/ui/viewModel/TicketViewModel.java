@@ -117,7 +117,9 @@ public class TicketViewModel implements Serializable {
     public int getIncorrectTranslated(SideTypes type) {
         return this.getCurrent(type).incorrectCount;
     }
-
+    public String getId() {
+        return dto.id;
+    }
 
     public void setDictionary(DictionaryViewModel dictionary){
         dto.dictionary = dictionary.dto;

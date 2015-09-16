@@ -16,6 +16,7 @@ import android.widget.Adapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -48,47 +49,7 @@ public abstract class BaseActivity<TA extends BaseActivity,TC extends ActivityCo
     //protected static Repository repository;
 
     protected void initAsRoot(RootActivity activity){
-        Thread.setDefaultUncaughtExceptionHandler(
-                new Thread.UncaughtExceptionHandler() {
-                    @Override
-                    public void uncaughtException(Thread paramThread, Throwable e) {
-                                                //Throwable couse = paramThrowable.getCause();
-//                        new AlertDialog.Builder(BaseActivity.this)
-//                                .setTitle("Error")
-//                                .setMessage(paramThrowable.getMessage())
-//                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-//                                    public void onClick(DialogInterface dialog, int which) {
-//                                        System.exit(2);
-//                                    }
-//                                })
-//                                .setIcon(android.R.drawable.ic_dialog_alert)
-//                                .show();
-                        //Toast.makeText(BaseActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        //System.exit(0); //Prevents the service/app from freezing
-                        final String str = e.getMessage();
-                        StackTraceElement[] stack = e.getStackTrace();
-                        Throwable th = e.fillInStackTrace();
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                Looper.prepare();
-                                //Toast.makeText(BaseActivity.this, str, Toast.LENGTH_LONG).show();
-                                new AlertDialog.Builder(BaseActivity.this)
-                                .setTitle("Error")
-                                .setMessage(str)
-                                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        System.exit(0);
-                                    }
-                                })
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
-                                Looper.loop();
-                            }
-                        }.start();
-                    }
-                });
-
+        Thread.setDefaultUncaughtExceptionHandler( new UncaughtExceptionHandler(activity));
     }
 
     @Override

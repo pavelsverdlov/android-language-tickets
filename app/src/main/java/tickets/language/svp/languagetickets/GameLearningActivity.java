@@ -9,11 +9,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.GridLayout;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import tickets.language.svp.languagetickets.domain.Repository;
@@ -22,7 +25,10 @@ import tickets.language.svp.languagetickets.domain.game.GameLearning;
 import tickets.language.svp.languagetickets.domain.game.ILearningQuestion;
 import tickets.language.svp.languagetickets.ui.BaseActivity;
 import tickets.language.svp.languagetickets.ui.TicketColors;
+import tickets.language.svp.languagetickets.ui.ViewExtensions;
 import tickets.language.svp.languagetickets.ui.controllers.ActivityController;
+import tickets.language.svp.languagetickets.ui.listeners.OnClickListener;
+import tickets.language.svp.languagetickets.ui.listeners.OnItemClickListener;
 import tickets.language.svp.languagetickets.ui.viewModel.TicketViewModel;
 
 import static tickets.language.svp.languagetickets.GameLearningActivity.PlaceholderFragment.*;
@@ -84,6 +90,7 @@ public class GameLearningActivity extends BaseActivity<GameLearningActivity,Game
     private PlaceholderFragment updatePlaceholder(ILearningQuestion question){
         setContentView(R.layout.activity_game_learning);
         final PlaceholderFragment container = new PlaceholderFragment();
+        container.setController(controller);
         container.setQuestion(question,
                 new PlaceholderClickListener() {
                     public void onSelected(ILearningQuestion question, int position) {
@@ -120,6 +127,8 @@ public class GameLearningActivity extends BaseActivity<GameLearningActivity,Game
     }
 
     public static class PlaceholderFragment extends Fragment {
+        private GameLearningActivityController controller;
+
         public static abstract class PlaceholderClickListener {
             public abstract void onSelected(ILearningQuestion question, int position);
             public abstract void onForward();
@@ -128,6 +137,11 @@ public class GameLearningActivity extends BaseActivity<GameLearningActivity,Game
         private ILearningQuestion question;
         private PlaceholderClickListener listener;
         private ImageButton forward;
+
+        public void setController(GameLearningActivityController controller){
+            this.controller = controller;
+        }
+
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -136,17 +150,18 @@ public class GameLearningActivity extends BaseActivity<GameLearningActivity,Game
             if(question != null){
                 TicketViewModel ticket = question.getLearningTicket();
                 TicketColors color = ticket.getBackground();
-                view.findViewById(R.id.game_learning_frame_base).setBackground(BaseActivity.getDrawableSecondBackground(color));
+                view.findViewById(R.id.game_learning_frame_base)
+                        .setBackground(BaseActivity.getDrawableSecondBackground(color));
 
                 int background = BaseActivity.getDrawableBackgroundId(color);
 
-                view.findViewById(R.id.game_learning_frame_first).setBackgroundResource(background);
+                view.findViewById(R.id.game_learning_ask_ticket).setBackgroundResource(background);
                 view.findViewById(R.id.game_learning_frame_choice_btns).setBackgroundResource(background);
 
                 TextView text = (TextView)view.findViewById(R.id.game_learning_text);
                 text.setText(question.getHeader());
 
-                final GridView grid = (GridView)view.findViewById(R.id.game_grid_choices);
+
 
                 String[] cc = question.getChoices();
                 ChoiceAdapter.ChoiceItem[] choices = new ChoiceAdapter.ChoiceItem[cc.length];
@@ -154,7 +169,47 @@ public class GameLearningActivity extends BaseActivity<GameLearningActivity,Game
                     choices[i] = new ChoiceAdapter.ChoiceItem(StringHelper.splitByLineSeparator(cc[i]));
                 }
 
-                ChoiceAdapter adapter = new ChoiceAdapter(inflater,choices ,background);
+                int halfScreenWidth = (int)(controller.getScreenWidth() * 0.5);
+
+                GridLayout root = ViewExtensions.findViewById(view, R.id.game_grid_choices);
+                LinearLayout col1 = new LinearLayout(inflater.getContext());
+                col1.setOrientation(LinearLayout.VERTICAL);
+                col1.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                LinearLayout col2 = new LinearLayout(inflater.getContext());
+                col2.setOrientation(LinearLayout.VERTICAL);
+                col2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                GridLayout.LayoutParams param1 = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(0));
+                param1.width = halfScreenWidth;
+                root.addView(col1, param1);
+                GridLayout.LayoutParams param2 = new GridLayout.LayoutParams(GridLayout.spec(0), GridLayout.spec(1));
+                param2.width = halfScreenWidth;
+                root.addView(col2, param2);
+
+                for (int i=0; i < choices.length ; ++i) {
+                    View item = inflater.inflate( R.layout.ticket_item_template , container, false);
+                    item.findViewById(R.id.ticket_item_container).setBackgroundResource(background);
+                 //   item.setOnClickListener(new OnClickListener(ticket, listener));
+                    //adapter for list of words for one ticket
+                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(inflater.getContext(),
+                            R.layout.list_item_word_template,
+                            ticket.getDisplayLearningText());
+                    ListView list = ViewExtensions.findViewById(item, R.id.learning_listOfFirst);
+                    list.setAdapter(adapter);
+                   // list.setOnItemClickListener(new OnItemClickListener(ticket, listener));
+                    BaseActivity.setHeightListView(list, adapter);
+                    //separate tickets by 2 columns
+                    if(i % 2 == 0){
+                        //col1.getChildCount();
+                        col1.addView(item);
+                    }else {
+                        col2.addView(item);
+                    }
+                }
+                /*
+//                ChoiceAdapter adapter = new ChoiceAdapter(inflater,choices ,background);
+                //final GridView grid = (GridView)view.findViewById(R.id.game_grid_choices);
                 grid.setAdapter(adapter);
 
                 int totalHeight = 0;
@@ -189,7 +244,7 @@ public class GameLearningActivity extends BaseActivity<GameLearningActivity,Game
                         forward.setVisibility(View.VISIBLE);
                     }
                 });
-
+                */
                 forward = (ImageButton)view.findViewById(R.id.game_bottom_btn_forward);
                 forward.setVisibility(View.GONE);
             }

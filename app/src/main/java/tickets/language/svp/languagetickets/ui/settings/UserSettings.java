@@ -76,6 +76,15 @@ public class UserSettings {
         editor.commit();
     }
 
+    public void putViewCoulumnsCount(int count){
+        SharedPreferences.Editor editor = setter();
+        editor.putInt(PreferenceConts.appsettings_view_columns_count, count);
+        editor.commit();
+    }
+    public int getViewColumnsCount(){
+        SharedPreferences getter = getter();
+        return getter.getInt(PreferenceConts.appsettings_view_columns_count, 2);
+    }
 
 
     private SharedPreferences getter(){

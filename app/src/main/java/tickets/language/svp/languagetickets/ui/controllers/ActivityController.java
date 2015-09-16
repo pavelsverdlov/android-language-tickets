@@ -3,6 +3,7 @@ package tickets.language.svp.languagetickets.ui.controllers;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.preference.PreferenceManager;
 
 import java.util.ArrayList;
@@ -111,5 +112,15 @@ public abstract class ActivityController<T extends Activity> extends Controller 
     }
     public static <T extends Activity> void goToActivity(Activity activity, ActivityOperationResult type, Class<T> _class){
         activity.startActivityForResult(new Intent(activity.getBaseContext(), _class), type.toInt());
+    }
+
+    public Point getScreenSize() {
+        Point size = new Point();
+        activity.getWindowManager().getDefaultDisplay().getSize(size);
+        return size;
+    }
+
+    public int getScreenWidth(){
+        return getScreenSize().x;
     }
 }

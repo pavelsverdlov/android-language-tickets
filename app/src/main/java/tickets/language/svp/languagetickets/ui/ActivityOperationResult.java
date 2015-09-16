@@ -10,7 +10,9 @@ public enum ActivityOperationResult {
     AddNewTicket(3),
     GameLearning(4),
     AppSettings(5),
-    GoogleDrive(6);
+    GoogleDrive(6),
+    Crash(7);
+
 
     private final int code;
 

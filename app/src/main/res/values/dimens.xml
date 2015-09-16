@@ -1,9 +1,11 @@
 <resources>
     <dimen name="fragment_padding">16dp</dimen>
+    <dimen name="fragment_margin">16dp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="title_text_size">15sp</dimen>
     <dimen name="margin">10dp</dimen>
+    <dimen name="ask_popup_text_size">18sp</dimen>
 </resources>

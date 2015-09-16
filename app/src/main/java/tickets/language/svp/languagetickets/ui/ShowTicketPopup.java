@@ -94,7 +94,7 @@ public class ShowTicketPopup {
                 public void onClick(View v) {
                     ticket.turnOver();
                     show(ticket);
-                    //TODO: should refresh one ticket controller.restartActivityWithSaveStorage();
+                    controller.activity.updateTicket(ticket);
                 }
             });
         }
